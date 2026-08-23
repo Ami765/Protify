@@ -1,0 +1,6 @@
+{
+  "name": "Portify",
+  "description": "AI-powered modern portfolio builder, interactive resume generator, and career showcase studio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
