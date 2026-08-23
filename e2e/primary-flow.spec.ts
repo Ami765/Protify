@@ -6,10 +6,10 @@ test.describe('Portify Primary User Flow', () => {
     await page.goto('/');
 
     // 2. Verify Portify brand is present
-    await expect(page.getByText('Portify')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Portify' })).toBeVisible();
 
     // 3. Check Visual Studio / Profile input
-    await page.getByRole('button', { name: /Visual Studio/i }).click();
+    await page.getByRole('button', { name: /Visual Studio/i }).first().click();
     const nameInput = page.locator('input[value="Amina Ajaz"]');
     await expect(nameInput).toBeVisible();
 
@@ -17,13 +17,13 @@ test.describe('Portify Primary User Flow', () => {
     await nameInput.fill('Amina Ajaz');
 
     // 4. Switch to AI Copilot & ATS Tab
-    await page.getByRole('button', { name: /AI Copilot & ATS/i }).click();
+    await page.getByRole('button', { name: /AI Copilot & ATS/i }).first().click();
     await expect(
       page.getByText(/Portify AI Portfolio Copilot/i)
     ).toBeVisible();
 
     // 5. Test Quick Action / 1-Click Audit
-    const auditBtn = page.getByRole('button', { name: /Run 1-Click Portfolio Audit/i });
+    const auditBtn = page.getByRole('button', { name: /Run 1-Click Portfolio Audit/i }).first();
     await auditBtn.click();
     await expect(page.getByText(/Portfolio Readiness Audit/i)).toBeVisible();
 
