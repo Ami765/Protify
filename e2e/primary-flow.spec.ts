@@ -19,13 +19,13 @@ test.describe('Portify Primary User Flow', () => {
     // 4. Switch to AI Copilot & ATS Tab
     await page.getByRole('button', { name: /AI Copilot & ATS/i }).first().click();
     await expect(
-      page.getByText(/Portify AI Portfolio Copilot/i)
+      page.getByRole('heading', { name: 'Portify AI Portfolio Copilot' })
     ).toBeVisible();
 
     // 5. Test Quick Action / 1-Click Audit
     const auditBtn = page.getByRole('button', { name: /Run 1-Click Portfolio Audit/i }).first();
     await auditBtn.click();
-    await expect(page.getByText(/Portfolio Readiness Audit/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Portfolio Readiness Audit/i })).toBeVisible();
 
     // 6. Navigate to Live Preview
     await page.getByRole('button', { name: /Live Preview/i }).first().click();
