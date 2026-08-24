@@ -7,7 +7,6 @@ import {
   Layers, 
   TrendingUp, 
   Settings, 
-  ExternalLink,
   Globe,
   Share2,
   CheckCircle2,
