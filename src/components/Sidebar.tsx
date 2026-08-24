@@ -45,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h1 className="font-extrabold text-lg text-white tracking-tight">Portify</h1>
+              <h1 className="font-extrabold text-lg text-white tracking-tight">Protify</h1>
               <span className="text-[10px] uppercase font-black bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30">
                 Studio
               </span>
@@ -57,9 +57,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Live Published Status Pill */}
         <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-1.5">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="flex items-center gap-1 text-emerald-400 font-bold text-[10px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online
-            </span>
           </div>
           <div className="flex items-center justify-between font-mono text-xs text-blue-400 truncate">
             <button
