@@ -2,7 +2,10 @@
 
 @layer base {
   body {
-    @apply antialiased bg-[#F1F5F9] text-slate-900;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }

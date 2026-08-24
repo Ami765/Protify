@@ -28,8 +28,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navItems: { id: NavTab; label: string; icon: React.ElementType; badge?: string }[] = [
     { id: 'editor', label: 'Visual Studio', icon: Code2 },
-    { id: 'preview', label: 'Live Preview', icon: Eye, badge: 'Live' },
-    { id: 'ai-agent', label: 'AI Copilot & ATS', icon: Bot, badge: 'Gemini' },
+    { id: 'preview', label: 'Live Preview', icon: Eye },
+    { id: 'ai-agent', label: 'AI Copilot & ATS', icon: Bot },
     { id: 'templates', label: 'Templates Gallery', icon: Layers },
     { id: 'analytics', label: 'Visitor Analytics', icon: TrendingUp },
     { id: 'settings', label: 'Domain & Export', icon: Settings },
