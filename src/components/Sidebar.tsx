@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Live Published Status Pill */}
+        {/* Live Published Status Pill
         <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-1.5">
           <div className="flex items-center justify-between text-[11px]">
           </div>
@@ -67,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <ExternalLink className="w-3 h-3" />
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Navigation Items */}
         <nav className="space-y-1">
