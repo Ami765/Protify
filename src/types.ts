@@ -40,6 +40,13 @@ export interface ProfileInfo {
   resumeDownloadUrl?: string;
 }
 
+export interface SocialLink {
+  platform: string;
+  url: string;
+  label?: string;
+  icon?: string;
+}
+
 export interface ProjectItem {
   id: string;
   title: string;
@@ -131,18 +138,32 @@ export interface ThemeConfig {
 
 export interface PortfolioData {
   profile: ProfileInfo;
+  about: string;
+  theme: ThemeConfig;
   projects: ProjectItem[];
   experience: ExperienceItem[];
   skills: SkillCategory[];
   education: EducationItem[];
   testimonials: TestimonialItem[];
-  articles: ArticleItem[];
-  theme: ThemeConfig;
+  socialLinks: SocialLink[];
   customDomain?: string;
   seoTitle?: string;
   seoDescription?: string;
   publishedUrl?: string;
   isPublished?: boolean;
+  flyRankBadge?: {
+    enabled: boolean;
+    verificationUrl: string;
+    cohort?: string;
+    graduateName?: string;
+    issuedDate?: string;
+    credentialId?: string;
+  };
+  analyticsConfig?: {
+    provider: 'portify' | 'plausible' | 'google-analytics' | 'umami';
+    trackingId?: string;
+    enabled: boolean;
+  };
 }
 
 export interface AiChatMessage {
