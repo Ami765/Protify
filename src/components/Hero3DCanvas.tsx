@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-// Three.js is supplied at runtime; keep this component buildable when its
-// optional type declarations are not available in the current environment.
-// @ts-expect-error -- the project may not include Three.js type declarations.
 import * as THREE from 'three';
 import { Box, RotateCw, Sparkles, Smartphone, Eye } from 'lucide-react';
 

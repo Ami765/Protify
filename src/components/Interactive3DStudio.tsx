@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-// Three.js is an optional enhancement; keep the component type-checkable when
-// its package/types are not installed in the host application.
-// @ts-expect-error The host may provide Three.js at runtime without typings.
 import * as THREE from 'three';
 import { 
   Box, 
