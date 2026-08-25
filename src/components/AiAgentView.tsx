@@ -7,14 +7,9 @@ import {
   CheckCircle2, 
   AlertTriangle, 
   Cpu, 
-  Terminal, 
   Zap, 
-  UserCheck, 
-  ArrowRight, 
   Check, 
-  RefreshCw, 
-  BookOpen,
-  FileCheck,
+  FileCheck, 
   Award,
   Square
 } from 'lucide-react';
@@ -124,7 +119,7 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
     if (!customText) setInput('');
     setIsLoading(true);
 
-    const delay = 50;
+    const delay = 250;
     timeoutRef.current = setTimeout(() => {
       setIsLoading(false);
       const lower = textToSend.toLowerCase();
@@ -199,13 +194,13 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
     }, delay);
   };
 
-  const handleApplySuggestedAction = (action: any) => {
+  const handleApplySuggestedAction = (action: NonNullable<AiChatMessage['suggestedAction']>) => {
     if (action.type === 'apply_bio') {
       onUpdatePortfolio({
         ...portfolioData,
         profile: {
           ...portfolioData.profile,
-          bio: action.payload,
+          bio: String(action.payload),
         },
       });
     }
@@ -306,7 +301,7 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
                   {/* 1-Click Action Pill */}
                   {m.suggestedAction && (
                     <button
-                      onClick={() => handleApplySuggestedAction(m.suggestedAction)}
+                      onClick={() => handleApplySuggestedAction(m.suggestedAction!)}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition cursor-pointer shadow-xs focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     >
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
