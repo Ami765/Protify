@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Bot, 
   Send, 
@@ -15,7 +15,8 @@ import {
   RefreshCw, 
   BookOpen,
   FileCheck,
-  Award
+  Award,
+  Square
 } from 'lucide-react';
 import { PortfolioData, AiChatMessage, PortfolioAuditResult } from '../types';
 
@@ -32,6 +33,7 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
 }) => {
   const [input, setInput] = useState(initialPrompt || '');
   const [isLoading, setIsLoading] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [auditResult, setAuditResult] = useState<PortfolioAuditResult | null>({
     overallScore: 93,
     summary: 'Strong high-impact portfolio. Demonstrates deep technical proficiency in edge streaming, React 19, and WCAG AA accessibility with clear quantifiable metrics.',
@@ -81,6 +83,32 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
     },
   ]);
 
+  const handleStopGeneration = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isLoading) {
+        handleStopGeneration();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isLoading]);
+
   const handleSend = async (customText?: string) => {
     const textToSend = customText || input;
     if (!textToSend.trim() || isLoading) return;
@@ -96,7 +124,8 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
     if (!customText) setInput('');
     setIsLoading(true);
 
-    setTimeout(() => {
+    const delay = 50;
+    timeoutRef.current = setTimeout(() => {
       setIsLoading(false);
       const lower = textToSend.toLowerCase();
 
@@ -167,7 +196,7 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
           },
         ]);
       }
-    }, 1000);
+    }, delay);
   };
 
   const handleApplySuggestedAction = (action: any) => {
@@ -237,7 +266,14 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
         {/* Left: Chat Terminal (7 cols) */}
         <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col h-[560px] overflow-hidden">
           {/* Chat Messages */}
-          <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/50">
+          <div 
+            id="ai-chat-messages-container"
+            aria-live="polite" 
+            aria-atomic="false" 
+            aria-label="AI Copilot conversation history"
+            role="log"
+            className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50/50"
+          >
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -251,6 +287,7 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
                       ? 'bg-blue-600 text-white'
                       : 'bg-slate-900 text-white shadow-xs'
                   }`}
+                  aria-hidden="true"
                 >
                   {m.sender === 'user' ? 'ME' : <Bot className="w-4 h-4 text-purple-400" />}
                 </div>
@@ -270,7 +307,7 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
                   {m.suggestedAction && (
                     <button
                       onClick={() => handleApplySuggestedAction(m.suggestedAction)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition cursor-pointer shadow-xs"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition cursor-pointer shadow-xs focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none"
                     >
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
                       <span>{m.suggestedAction.label}</span>
@@ -281,14 +318,21 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
             ))}
 
             {isLoading && (
-              <div className="flex gap-3 max-w-md animate-pulse">
-                <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0">
-                  <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-                </div>
-                <div className="bg-white border border-slate-200 p-3.5 rounded-2xl text-xs text-slate-500 shadow-xs flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-spin" />
+              <div className="flex items-center justify-between gap-3 bg-white border border-purple-200 p-3.5 rounded-2xl text-xs text-slate-700 shadow-xs">
+                <div className="flex items-center gap-2.5">
+                  <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
                   <span>Synthesizing portfolio intelligence & metrics...</span>
                 </div>
+                <button
+                  type="button"
+                  id="stop-generation-btn"
+                  onClick={handleStopGeneration}
+                  aria-label="Stop AI generation (or press Escape)"
+                  className="flex items-center gap-1.5 px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg text-xs font-bold transition cursor-pointer focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none"
+                >
+                  <Square className="w-3 h-3 fill-red-600 text-red-600" />
+                  <span>Stop</span>
+                </button>
               </div>
             )}
           </div>
@@ -302,22 +346,38 @@ export const AiAgentView: React.FC<AiAgentViewProps> = ({
               }}
               className="flex items-center gap-2"
             >
+              <label htmlFor="ai-chat-prompt-input" className="sr-only">
+                Ask AI copilot prompt
+              </label>
               <input
+                id="ai-chat-prompt-input"
                 type="text"
                 placeholder="Ask AI to polish your bio, generate case studies, or suggest missing skills..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading}
-                className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition"
+                className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus:bg-white transition"
               />
 
-              <button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                className="p-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white rounded-xl font-bold shadow-xs transition cursor-pointer active:scale-95"
-              >
-                <Send className="w-4 h-4" />
-              </button>
+              {isLoading ? (
+                <button
+                  type="button"
+                  onClick={handleStopGeneration}
+                  aria-label="Stop current generation"
+                  className="p-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold shadow-xs transition cursor-pointer active:scale-95 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none"
+                >
+                  <Square className="w-4 h-4 fill-white" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  aria-label="Send prompt to AI copilot"
+                  disabled={!input.trim() || isLoading}
+                  className="p-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white rounded-xl font-bold shadow-xs transition cursor-pointer active:scale-95 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              )}
             </form>
           </div>
         </div>

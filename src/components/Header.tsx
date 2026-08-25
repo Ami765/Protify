@@ -58,7 +58,8 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-2.5">
           <button
             onClick={onAiClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs rounded-xl border border-purple-200 transition cursor-pointer"
+            aria-label="Open AI Copilot and ATS audit"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs rounded-xl border border-purple-200 transition cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:outline-none"
           >
             <Sparkles className="w-3.5 h-3.5 text-purple-600" />
             <span className="hidden sm:inline">AI Copilot</span>
@@ -66,7 +67,8 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onPreviewClick}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition cursor-pointer"
+            aria-label="Open Live Portfolio Preview"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition cursor-pointer focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:outline-none"
           >
             <Eye className="w-3.5 h-3.5 text-slate-600" />
             <span>Live Preview</span>
@@ -74,7 +76,8 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setIsShareModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer active:scale-95"
+            aria-label="Publish and share portfolio link"
+            className="flex items-center gap-1.5 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer active:scale-95 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span>Publish & Share</span>
@@ -84,7 +87,12 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Share Modal Dialog */}
       {isShareModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in">
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="share-dialog-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in"
+        >
           <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-5 animate-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -92,13 +100,14 @@ export const Header: React.FC<HeaderProps> = ({
                   <Globe className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-900">Your Portfolio is Live!</h3>
+                  <h3 id="share-dialog-title" className="font-bold text-sm text-slate-900">Your Portfolio is Live!</h3>
                   <p className="text-[11px] text-slate-400">Accessible globally with edge caching</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsShareModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 text-xs font-bold cursor-pointer"
+                aria-label="Close share dialog"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 text-xs font-bold cursor-pointer focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:outline-none"
               >
                 ✕
               </button>

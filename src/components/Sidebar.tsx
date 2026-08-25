@@ -10,7 +10,8 @@ import {
   Globe,
   Share2,
   CheckCircle2,
-  Sliders
+  Sliders,
+  Box
 } from 'lucide-react';
 import { NavTab, PortfolioData } from '../types';
 
@@ -27,8 +28,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navItems: { id: NavTab; label: string; icon: React.ElementType; badge?: string }[] = [
     { id: 'editor', label: 'Visual Studio', icon: Code2 },
-    { id: 'preview', label: 'Live Preview', icon: Eye },
-    { id: 'ai-agent', label: 'AI Copilot & ATS', icon: Bot },
+    { id: 'preview', label: 'Live Preview', icon: Eye, badge: 'Live' },
+    { id: '3d-studio' as NavTab, label: '3D Material Studio', icon: Box, badge: '3D' },
+    { id: 'ai-agent', label: 'AI Copilot & ATS', icon: Bot, badge: 'Gemini' },
     { id: 'templates', label: 'Templates Gallery', icon: Layers },
     { id: 'analytics', label: 'Visitor Analytics', icon: TrendingUp },
     { id: 'settings', label: 'Domain & Export', icon: Settings },
@@ -44,7 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <h1 className="font-extrabold text-lg text-white tracking-tight">Protify</h1>
+              <h1 className="font-extrabold text-lg text-white tracking-tight">Portify</h1>
               <span className="text-[10px] uppercase font-black bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/30">
                 Studio
               </span>
@@ -52,21 +54,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <p className="text-[11px] text-slate-400 font-medium">AI Portfolio & Career Engine</p>
           </div>
         </div>
-
-        {/* Live Published Status Pill
-        <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-1.5">
-          <div className="flex items-center justify-between text-[11px]">
-          </div>
-          <div className="flex items-center justify-between font-mono text-xs text-blue-400 truncate">
-            <button
-              onClick={() => setActiveTab('preview')}
-              className="text-slate-400 hover:text-white p-0.5 cursor-pointer"
-              title="Open Live Preview"
-            >
-              <ExternalLink className="w-3 h-3" />
-            </button>
-          </div>
-        </div> */}
 
         {/* Navigation Items */}
         <nav className="space-y-1">
@@ -80,7 +67,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={`Navigate to ${item.label}`}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
