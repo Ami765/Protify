@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-// Three.js is provided by the runtime bundler; keep this component buildable when
-// its optional type declarations are not available in the current environment.
-// @ts-expect-error -- the application supplies the Three.js module at runtime.
+// Three.js is an optional enhancement; keep the component type-checkable when
+// its package/types are not installed in the host application.
+// @ts-expect-error The host may provide Three.js at runtime without typings.
 import * as THREE from 'three';
 import { 
   Box, 
@@ -27,6 +27,19 @@ export type MeshShape = 'cube' | 'sphere' | 'torus' | 'cylinder' | 'icosahedron'
 export type MaterialType = 'standard' | 'physical' | 'normal' | 'wireframe';
 export type LightingPreset = 'studio' | 'sunset' | 'cyberpunk' | 'monochrome';
 
+// Safe WebGL availability check
+const isWebGLAvailable = (): boolean => {
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+    );
+  } catch (e) {
+    return false;
+  }
+};
+
 export const Interactive3DStudio: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [shape, setShape] = useState<MeshShape>('torus');
@@ -42,7 +55,7 @@ export const Interactive3DStudio: React.FC = () => {
   const [particleField, setParticleField] = useState<boolean>(true);
   const [fps, setFps] = useState<number>(60);
   const [polyCount, setPolyCount] = useState<number>(3840);
-  const [reducedMotionFallback, setReducedMotionFallback] = useState<boolean>(false);
+  const [reducedMotionFallback, setReducedMotionFallback] = useState<boolean>(() => !isWebGLAvailable());
   const [showConfigurator, setShowConfigurator] = useState<boolean>(true);
   const [customBadgeText, setCustomBadgeText] = useState<string>('Full-Stack Engineer');
 
@@ -72,129 +85,141 @@ export const Interactive3DStudio: React.FC = () => {
   useEffect(() => {
     if (!mountRef.current || reducedMotionFallback) return;
 
-    const container = mountRef.current;
-    const width = container.clientWidth || 600;
-    const height = container.clientHeight || 500;
-
-    // 1. Scene
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
-
-    // 2. Camera
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 0, 4.5);
-    cameraRef.current = camera;
-
-    // 3. Renderer with optimal mobile budget settings (antialiasing + powerPreference)
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: window.devicePixelRatio < 2, // save GPU on high-density displays
-      alpha: true,
-      powerPreference: 'high-performance'
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
-    rendererRef.current = renderer;
-
-    container.innerHTML = '';
-    container.appendChild(renderer.domElement);
-
-    // 4. Lights Group
-    const lightsGroup = new THREE.Group();
-    scene.add(lightsGroup);
-    lightsGroupRef.current = lightsGroup;
-
-    // 5. Build Initial Mesh
-    updateGeometryAndMaterial(shape, materialType, color, roughness, metalness, clearcoat, wireframe);
-
-    // 6. Build Ambient Particle Field (Optimized buffer geometry)
-    const particleGeo = new THREE.BufferGeometry();
-    const particleCount = 120;
-    const posArray = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      posArray[i] = (Math.random() - 0.5) * 10;
-      posArray[i + 1] = (Math.random() - 0.5) * 10;
-      posArray[i + 2] = (Math.random() - 0.5) * 8;
-    }
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const particleMat = new THREE.PointsMaterial({
-      size: 0.035,
-      color: 0x818CF8,
-      transparent: true,
-      opacity: 0.6,
-    });
-    const particles = new THREE.Points(particleGeo, particleMat);
-    scene.add(particles);
-    particlesRef.current = particles;
-
-    // Update Lighting for selected preset
-    applyLighting(lightingPreset, lightsGroup);
-
-    // 7. Render Loop with FPS Counter
+    let renderer: THREE.WebGLRenderer | null = null;
     let animationFrameId: number;
-    let lastTime = performance.now();
-    let frameCounter = 0;
-    let fpsTimer = performance.now();
+    let resizeObserver: ResizeObserver | null = null;
+    let particleGeo: THREE.BufferGeometry | null = null;
+    let particleMat: THREE.PointsMaterial | null = null;
 
-    const animate = (currentTime: number) => {
-      animationFrameId = requestAnimationFrame(animate);
+    try {
+      const container = mountRef.current;
+      const width = Math.max(container.clientWidth || 600, 300);
+      const height = Math.max(container.clientHeight || 500, 300);
 
-      frameCounter++;
-      if (currentTime - fpsTimer >= 500) {
-        setFps(Math.round((frameCounter * 1000) / (currentTime - fpsTimer)));
-        frameCounter = 0;
-        fpsTimer = currentTime;
+      // 1. Scene
+      const scene = new THREE.Scene();
+      sceneRef.current = scene;
+
+      // 2. Camera
+      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      camera.position.set(0, 0, 4.5);
+      cameraRef.current = camera;
+
+      // 3. Renderer with optimal mobile budget settings
+      renderer = new THREE.WebGLRenderer({ 
+        antialias: window.devicePixelRatio < 2,
+        alpha: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.2;
+      rendererRef.current = renderer;
+
+      container.innerHTML = '';
+      container.appendChild(renderer.domElement);
+
+      // 4. Lights Group
+      const lightsGroup = new THREE.Group();
+      scene.add(lightsGroup);
+      lightsGroupRef.current = lightsGroup;
+
+      // 5. Build Initial Mesh
+      updateGeometryAndMaterial(shape, materialType, color, roughness, metalness, clearcoat, wireframe);
+
+      // 6. Build Ambient Particle Field (Optimized buffer geometry)
+      particleGeo = new THREE.BufferGeometry();
+      const particleCount = 120;
+      const posArray = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+        posArray[i + 1] = (Math.random() - 0.5) * 10;
+        posArray[i + 2] = (Math.random() - 0.5) * 8;
       }
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      particleMat = new THREE.PointsMaterial({
+        size: 0.035,
+        color: 0x818CF8,
+        transparent: true,
+        opacity: 0.6,
+      });
+      const particles = new THREE.Points(particleGeo, particleMat);
+      scene.add(particles);
+      particlesRef.current = particles;
 
-      const delta = (currentTime - lastTime) * 0.001;
-      lastTime = currentTime;
+      // Update Lighting for selected preset
+      applyLighting(lightingPreset, lightsGroup);
 
-      // Mouse Smooth Damping
-      mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * 0.08;
-      mouseRef.current.y += (mouseRef.current.targetY - mouseRef.current.y) * 0.08;
+      // 7. Render Loop with FPS Counter
+      let lastTime = performance.now();
+      let frameCounter = 0;
+      let fpsTimer = performance.now();
 
-      if (meshRef.current) {
-        if (autoRotate) {
-          meshRef.current.rotation.y += rotationSpeed * delta * 0.8;
-          meshRef.current.rotation.x += rotationSpeed * delta * 0.4;
+      const animate = (currentTime: number) => {
+        animationFrameId = requestAnimationFrame(animate);
+
+        frameCounter++;
+        if (currentTime - fpsTimer >= 500) {
+          setFps(Math.round((frameCounter * 1000) / (currentTime - fpsTimer)));
+          frameCounter = 0;
+          fpsTimer = currentTime;
         }
 
-        // Parallax offset on mouse move
-        meshRef.current.rotation.y += mouseRef.current.x * 0.02;
-        meshRef.current.rotation.x += mouseRef.current.y * 0.02;
-      }
+        const delta = (currentTime - lastTime) * 0.001;
+        lastTime = currentTime;
 
-      if (particlesRef.current && particleField) {
-        particlesRef.current.rotation.y += 0.05 * delta;
-      }
+        // Mouse Smooth Damping
+        mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * 0.08;
+        mouseRef.current.y += (mouseRef.current.targetY - mouseRef.current.y) * 0.08;
 
-      renderer.render(scene, camera);
-    };
+        if (meshRef.current) {
+          if (autoRotate) {
+            meshRef.current.rotation.y += rotationSpeed * delta * 0.8;
+            meshRef.current.rotation.x += rotationSpeed * delta * 0.4;
+          }
 
-    animate(performance.now());
-
-    // Resize Observer
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width: w, height: h } = entry.contentRect;
-        if (w > 0 && h > 0) {
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-          renderer.setSize(w, h);
+          // Parallax offset on mouse move
+          meshRef.current.rotation.y += mouseRef.current.x * 0.02;
+          meshRef.current.rotation.x += mouseRef.current.y * 0.02;
         }
-      }
-    });
-    resizeObserver.observe(container);
+
+        if (particlesRef.current && particleField) {
+          particlesRef.current.rotation.y += 0.05 * delta;
+        }
+
+        if (renderer && scene && camera) {
+          renderer.render(scene, camera);
+        }
+      };
+
+      animate(performance.now());
+
+      // Resize Observer
+      resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const { width: w, height: h } = entry.contentRect;
+          if (w > 0 && h > 0 && renderer && camera) {
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+          }
+        }
+      });
+      resizeObserver.observe(container);
+    } catch (err) {
+      console.warn('WebGL Initialization Error in 3D Studio, fallback to 2D UI:', err);
+      setReducedMotionFallback(true);
+    }
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
-      renderer.dispose();
-      particleGeo.dispose();
-      particleMat.dispose();
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      if (resizeObserver) resizeObserver.disconnect();
+      if (renderer) renderer.dispose();
+      if (particleGeo) particleGeo.dispose();
+      if (particleMat) particleMat.dispose();
+      if (mountRef.current && renderer && mountRef.current.contains(renderer.domElement)) {
+        mountRef.current.removeChild(renderer.domElement);
       }
     };
   }, [reducedMotionFallback]);
@@ -258,80 +283,84 @@ export const Interactive3DStudio: React.FC = () => {
   ) => {
     if (!sceneRef.current) return;
 
-    // Remove existing mesh
-    if (meshRef.current) {
-      sceneRef.current.remove(meshRef.current);
-      meshRef.current.geometry.dispose();
-      if (Array.isArray(meshRef.current.material)) {
-        meshRef.current.material.forEach((m: THREE.Material) => m.dispose());
-      } else {
-        meshRef.current.material.dispose();
+    try {
+      // Remove existing mesh
+      if (meshRef.current) {
+        sceneRef.current.remove(meshRef.current);
+        meshRef.current.geometry.dispose();
+        if (Array.isArray(meshRef.current.material)) {
+          meshRef.current.material.forEach((m: any) => m.dispose());
+        } else {
+          meshRef.current.material.dispose();
+        }
       }
+
+      // 1. Create Geometry
+      let geometry: THREE.BufferGeometry;
+      let polyEst = 0;
+
+      switch (currentShape) {
+        case 'cube':
+          geometry = new THREE.BoxGeometry(1.6, 1.6, 1.6, 2, 2, 2);
+          polyEst = 24;
+          break;
+        case 'sphere':
+          geometry = new THREE.SphereGeometry(1.2, 48, 48);
+          polyEst = 4608;
+          break;
+        case 'torus':
+          geometry = new THREE.TorusGeometry(1.1, 0.45, 32, 64);
+          polyEst = 4096;
+          break;
+        case 'cylinder':
+          geometry = new THREE.CylinderGeometry(0.9, 0.9, 1.8, 40);
+          polyEst = 1600;
+          break;
+        case 'icosahedron':
+          geometry = new THREE.IcosahedronGeometry(1.3, 2);
+          polyEst = 640;
+          break;
+        case 'knot':
+        default:
+          geometry = new THREE.TorusKnotGeometry(0.9, 0.32, 80, 24);
+          polyEst = 3840;
+          break;
+      }
+
+      setPolyCount(polyEst);
+
+      // 2. Create Material
+      let material: THREE.Material;
+      if (currentMat === 'normal') {
+        material = new THREE.MeshNormalMaterial({
+          wireframe: currentWireframe,
+        });
+      } else if (currentMat === 'standard') {
+        material = new THREE.MeshStandardMaterial({
+          color: new THREE.Color(currentColor),
+          roughness: currentRoughness,
+          metalness: currentMetalness,
+          wireframe: currentWireframe,
+        });
+      } else {
+        // MeshPhysicalMaterial
+        material = new THREE.MeshPhysicalMaterial({
+          color: new THREE.Color(currentColor),
+          roughness: currentRoughness,
+          metalness: currentMetalness,
+          clearcoat: currentClearcoat,
+          clearcoatRoughness: 0.1,
+          reflectivity: 0.9,
+          wireframe: currentWireframe,
+        });
+      }
+
+      const mesh = new THREE.Mesh(geometry, material);
+      sceneRef.current.add(mesh);
+      meshRef.current = mesh;
+    } catch (e) {
+      console.warn('Error updating 3D geometry/material:', e);
     }
-
-    // 1. Create Geometry
-    let geometry: THREE.BufferGeometry;
-    let polyEst = 0;
-
-    switch (currentShape) {
-      case 'cube':
-        geometry = new THREE.BoxGeometry(1.6, 1.6, 1.6, 2, 2, 2);
-        polyEst = 24;
-        break;
-      case 'sphere':
-        geometry = new THREE.SphereGeometry(1.2, 48, 48);
-        polyEst = 4608;
-        break;
-      case 'torus':
-        geometry = new THREE.TorusGeometry(1.1, 0.45, 32, 64);
-        polyEst = 4096;
-        break;
-      case 'cylinder':
-        geometry = new THREE.CylinderGeometry(0.9, 0.9, 1.8, 40);
-        polyEst = 1600;
-        break;
-      case 'icosahedron':
-        geometry = new THREE.IcosahedronGeometry(1.3, 2);
-        polyEst = 640;
-        break;
-      case 'knot':
-      default:
-        geometry = new THREE.TorusKnotGeometry(0.9, 0.32, 80, 24);
-        polyEst = 3840;
-        break;
-    }
-
-    setPolyCount(polyEst);
-
-    // 2. Create Material
-    let material: THREE.Material;
-    if (currentMat === 'normal') {
-      material = new THREE.MeshNormalMaterial({
-        wireframe: currentWireframe,
-      });
-    } else if (currentMat === 'standard') {
-      material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(currentColor),
-        roughness: currentRoughness,
-        metalness: currentMetalness,
-        wireframe: currentWireframe,
-      });
-    } else {
-      // MeshPhysicalMaterial
-      material = new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(currentColor),
-        roughness: currentRoughness,
-        metalness: currentMetalness,
-        clearcoat: currentClearcoat,
-        clearcoatRoughness: 0.1,
-        reflectivity: 0.9,
-        wireframe: currentWireframe,
-      });
-    }
-
-    const mesh = new THREE.Mesh(geometry, material);
-    sceneRef.current.add(mesh);
-    meshRef.current = mesh;
   };
 
   // Sync changes

@@ -7,6 +7,8 @@ import { AiAgentView } from './components/AiAgentView';
 import { TemplatesView } from './components/TemplatesView';
 import { AnalyticsView } from './components/AnalyticsView';
 import { SettingsView } from './components/SettingsView';
+import { Interactive3DStudio } from './components/Interactive3DStudio';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { initialPortfolioData } from './data/mockData';
 import { PortfolioTemplateItem } from './data/templates';
 import { NavTab, PortfolioData } from './types';
@@ -56,46 +58,50 @@ export default function App() {
         {/* Scrollable Main Stage */}
         <div className="flex-1 p-6 sm:p-8 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
-            {activeTab === 'editor' && (
-              <EditorView
-                data={portfolioData}
-                onChange={setPortfolioData}
-                onOpenAiPrompt={handleTriggerAiPrompt}
-                onPreviewLive={() => setActiveTab('preview')}
-              />
-            )}
+            <ErrorBoundary onReset={() => setActiveTab('editor')}>
+              {activeTab === 'editor' && (
+                <EditorView
+                  data={portfolioData}
+                  onChange={setPortfolioData}
+                  onOpenAiPrompt={handleTriggerAiPrompt}
+                  onPreviewLive={() => setActiveTab('preview')}
+                />
+              )}
 
-            {activeTab === 'preview' && (
-              <LivePortfolioView
-                data={portfolioData}
-                onEditSection={() => setActiveTab('editor')}
-              />
-            )}
+              {activeTab === 'preview' && (
+                <LivePortfolioView
+                  data={portfolioData}
+                  onEditSection={() => setActiveTab('editor')}
+                />
+              )}
 
-            {activeTab === 'ai-agent' && (
-              <AiAgentView
-                portfolioData={portfolioData}
-                onUpdatePortfolio={setPortfolioData}
-                initialPrompt={aiInitialPrompt}
-              />
-            )}
+              {activeTab === ('3d-studio' as NavTab) && <Interactive3DStudio />}
 
-            {activeTab === 'templates' && (
-              <TemplatesView
-                onApplyTemplate={handleApplyTemplate}
-                currentThemeId={portfolioData.theme.id}
-                onPreviewLive={() => setActiveTab('preview')}
-              />
-            )}
+              {activeTab === 'ai-agent' && (
+                <AiAgentView
+                  portfolioData={portfolioData}
+                  onUpdatePortfolio={setPortfolioData}
+                  initialPrompt={aiInitialPrompt}
+                />
+              )}
 
-            {activeTab === 'analytics' && <AnalyticsView />}
+              {activeTab === 'templates' && (
+                <TemplatesView
+                  onApplyTemplate={handleApplyTemplate}
+                  currentThemeId={portfolioData.theme.id}
+                  onPreviewLive={() => setActiveTab('preview')}
+                />
+              )}
 
-            {activeTab === 'settings' && (
-              <SettingsView
-                data={portfolioData}
-                onChange={setPortfolioData}
-              />
-            )}
+              {activeTab === 'analytics' && <AnalyticsView />}
+
+              {activeTab === 'settings' && (
+                <SettingsView
+                  data={portfolioData}
+                  onChange={setPortfolioData}
+                />
+              )}
+            </ErrorBoundary>
           </div>
         </div>
       </main>
