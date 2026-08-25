@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Award, ShieldCheck, ExternalLink, CheckCircle2, X } from 'lucide-react';
 
-interface FlyRankBadgeProps {
+interface GraduateBadgeProps {
   verificationUrl?: string;
   graduateName?: string;
   cohort?: string;
@@ -9,7 +9,7 @@ interface FlyRankBadgeProps {
   credentialId?: string;
 }
 
-export const FlyRankBadge: React.FC<FlyRankBadgeProps> = ({
+export const GraduateBadge: React.FC<GraduateBadgeProps> = ({
   verificationUrl = 'https://aifluency.flyrank.ai/week-09.html#plant-your-flag',
   graduateName = 'Amina Ajaz',
   cohort = 'AI Fluency — Cohort 2026',
@@ -32,7 +32,6 @@ export const FlyRankBadge: React.FC<FlyRankBadgeProps> = ({
           title="Verify FlyRank AI Fluency Graduate Credential"
           className="group relative inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/40 hover:border-indigo-400 text-slate-100 shadow-md shadow-indigo-950/40 hover:shadow-indigo-900/60 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:outline-none"
         >
-          {/* Glowing shield */}
           <div className="relative flex items-center justify-center">
             <div className="w-5 h-5 rounded-full bg-indigo-600/30 flex items-center justify-center text-indigo-300">
               <ShieldCheck className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
@@ -58,7 +57,6 @@ export const FlyRankBadge: React.FC<FlyRankBadgeProps> = ({
           <ExternalLink className="w-3 h-3 text-indigo-400/80 group-hover:text-indigo-300 group-hover:translate-x-0.5 transition-all ml-0.5" />
         </a>
 
-        {/* Modal trigger */}
         <button
           type="button"
           onClick={() => setShowModal(true)}
@@ -69,7 +67,7 @@ export const FlyRankBadge: React.FC<FlyRankBadgeProps> = ({
         </button>
       </div>
 
-      {/* Credential Verification Modal */}
+      {/* Verification Modal */}
       {showModal && (
         <div 
           id="flyrank-verification-modal"
@@ -117,28 +115,6 @@ export const FlyRankBadge: React.FC<FlyRankBadgeProps> = ({
                   <span className="flex items-center gap-1 text-emerald-400 font-bold">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Authenticated
                   </span>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                  Verified Skills & Competencies
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    'AI Engineering & Copilots',
-                    'High-Impact Portfolio Design',
-                    'Automated Testing (Vitest & Playwright)',
-                    'Custom Domain & Edge Deployment',
-                    'Real-Time Analytics & Telemetry',
-                  ].map((skill) => (
-                    <span
-                      key={skill}
-                      className="px-2 py-1 rounded bg-indigo-950/60 border border-indigo-500/30 text-indigo-200 text-[10px] font-medium"
-                    >
-                      {skill}
-                    </span>
-                  ))}
                 </div>
               </div>
             </div>

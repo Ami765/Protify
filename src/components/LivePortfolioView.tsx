@@ -28,7 +28,7 @@ import {
   Share2
 } from 'lucide-react';
 import { PortfolioData, ProjectItem } from '../types';
-import { FlyRankBadge } from './FlyrankBadge';
+import { GraduateBadge } from './GraduateBadge';
 interface LivePortfolioViewProps {
   data: PortfolioData;
   onEditSection?: (section: any) => void;
@@ -217,8 +217,8 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                 {/* Availability & Custom Badge */}
                 <div className="flex flex-wrap items-center gap-2">
                   <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${profile.availability === 'Open to Work'
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                      : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                     }`}>
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>{profile.availability}</span>
@@ -365,8 +365,8 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
                         className={`text-xs px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${activeCategory === cat
-                            ? 'text-white font-bold shadow-xs'
-                            : isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'text-white font-bold shadow-xs'
+                          : isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                           }`}
                         style={activeCategory === cat ? { backgroundColor: theme.accentColor } : {}}
                       >
@@ -382,8 +382,8 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                     <div
                       key={project.id}
                       className={`group rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col ${isDark
-                          ? 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/90'
-                          : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-lg'
+                        ? 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/90'
+                        : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-lg'
                         }`}
                     >
                       {/* Image Thumbnail */}
@@ -695,12 +695,12 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
 
               {/* Verified FlyRank Graduate Badge */}
               <div className="flex items-center gap-3">
-                <FlyRankBadge
-                  verificationUrl={flyRankBadge?.verificationUrl || 'https://aifluency.flyrank.ai/week-09.html#plant-your-flag'}
-                  graduateName={flyRankBadge?.graduateName || profile.name}
-                  cohort={flyRankBadge?.cohort || 'AI Fluency — Cohort 2026'}
-                  issuedDate={flyRankBadge?.issuedDate || 'August 2026'}
-                  credentialId={flyRankBadge?.credentialId || 'FLR-2026-AIF-8941'}
+                <GraduateBadge
+                  verificationUrl={data.flyRankBadge?.verificationUrl || 'https://aifluency.flyrank.ai/week-09.html#plant-your-flag'}
+                  graduateName={data.flyRankBadge?.graduateName || profile.name}
+                  cohort={data.flyRankBadge?.cohort || 'AI Fluency — Cohort 2026'}
+                  issuedDate={data.flyRankBadge?.issuedDate || 'August 2026'}
+                  credentialId={data.flyRankBadge?.credentialId || 'FLR-2026-AIF-8941'}
                 />
               </div>
 
