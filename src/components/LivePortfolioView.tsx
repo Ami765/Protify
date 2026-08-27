@@ -1,49 +1,41 @@
 import React, { useState } from 'react';
-import {
-  Github,
-  Linkedin,
-  Twitter,
-  Globe,
-  Mail,
-  ExternalLink,
-  Download,
-  Sparkles,
-  MapPin,
-  Calendar,
-  Briefcase,
-  GraduationCap,
-  BookOpen,
-  Star,
-  Quote,
-  Code2,
-  Layers,
-  ArrowUpRight,
-  CheckCircle2,
-  Monitor,
-  Tablet,
-  Smartphone,
-  Copy,
-  Check,
+import { 
+  Github, 
+  Linkedin, 
+  Twitter, 
+  Globe, 
+  Mail, 
+  ExternalLink, 
+  Download, 
+  Sparkles, 
+  MapPin, 
+  Calendar, 
+  Briefcase, 
+  GraduationCap, 
+  BookOpen, 
+  Star, 
+  Quote, 
+  Code2, 
+  Layers, 
+  ArrowUpRight, 
+  CheckCircle2, 
+  Monitor, 
+  Tablet, 
+  Smartphone, 
+  Copy, 
+  Check, 
   Maximize2,
   Share2
 } from 'lucide-react';
 import { PortfolioData, ProjectItem } from '../types';
-import { GraduateBadge } from './GraduateBadge';
+import { Hero3DCanvas } from './Hero3DCanvas';
+import { ShaderHeroCanvas } from './ShaderHeroCanvas';
+
 interface LivePortfolioViewProps {
   data: PortfolioData;
   onEditSection?: (section: any) => void;
   standalone?: boolean;
 }
-
-type PortfolioDataWithFlyRankBadge = PortfolioData & {
-  flyRankBadge?: {
-    verificationUrl?: string;
-    graduateName?: string;
-    cohort?: string;
-    issuedDate?: string;
-    credentialId?: string;
-  };
-};
 
 export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
   data,
@@ -51,21 +43,12 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
   standalone = false,
 }) => {
   const [deviceMode, setDeviceMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [heroVisualMode, setHeroVisualMode] = useState<'shader' | 'mesh'>('shader');
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const { profile, projects, experience, skills, education, testimonials, theme } = data;
-  const articles = (data as PortfolioData & {
-    articles?: Array<{
-      id: string;
-      url: string;
-      publication: string;
-      readTime: string;
-      title: string;
-    }>;
-  }).articles ?? [];
-  const flyRankBadge = (data as PortfolioDataWithFlyRankBadge).flyRankBadge;
+  const { profile, projects, experience, skills, education, testimonials, articles, theme } = data;
 
   const categories = ['All', 'AI & ML', 'Web Apps', 'Systems', 'Design & UI', 'Open Source'];
 
@@ -80,20 +63,20 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
   };
 
   const isDark = theme.bgMode === 'dark';
-  const fontClass =
-    theme.fontFamily === 'mono'
-      ? 'font-mono'
-      : theme.fontFamily === 'serif'
-        ? 'font-serif'
-        : 'font-sans';
+  const fontClass = 
+    theme.fontFamily === 'mono' 
+      ? 'font-mono' 
+      : theme.fontFamily === 'serif' 
+      ? 'font-serif' 
+      : 'font-sans';
 
   // Responsive device container wrapper
   const containerWidthClass =
     deviceMode === 'mobile'
       ? 'max-w-sm mx-auto'
       : deviceMode === 'tablet'
-        ? 'max-w-2xl mx-auto'
-        : 'w-full max-w-5xl mx-auto';
+      ? 'max-w-2xl mx-auto'
+      : 'w-full max-w-5xl mx-auto';
 
   return (
     <div className="space-y-6">
@@ -104,8 +87,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
             <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
                 onClick={() => setDeviceMode('desktop')}
-                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${deviceMode === 'desktop' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
-                  }`}
+                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                  deviceMode === 'desktop' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
+                }`}
                 title="Desktop View"
               >
                 <Monitor className="w-4 h-4" />
@@ -113,8 +97,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
               </button>
               <button
                 onClick={() => setDeviceMode('tablet')}
-                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${deviceMode === 'tablet' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
-                  }`}
+                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                  deviceMode === 'tablet' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
+                }`}
                 title="Tablet View"
               >
                 <Tablet className="w-4 h-4" />
@@ -122,8 +107,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
               </button>
               <button
                 onClick={() => setDeviceMode('mobile')}
-                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${deviceMode === 'mobile' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
-                  }`}
+                className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                  deviceMode === 'mobile' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
+                }`}
                 title="Mobile View"
               >
                 <Smartphone className="w-4 h-4" />
@@ -160,11 +146,13 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
       {/* Frame Container for Device Simulation */}
       <div className={`transition-all duration-300 ${containerWidthClass}`}>
         <div
-          className={`overflow-hidden border shadow-2xl transition-colors duration-300 ${theme.borderRadius || 'rounded-2xl'
-            } ${isDark
+          className={`overflow-hidden border shadow-2xl transition-colors duration-300 ${
+            theme.borderRadius || 'rounded-2xl'
+          } ${
+            isDark
               ? 'bg-[#0B0F17] text-slate-100 border-slate-800'
               : 'bg-white text-slate-900 border-slate-200'
-            } ${fontClass}`}
+          } ${fontClass}`}
         >
           {/* Subtle Grid / Background Texture if enabled */}
           <div className="relative">
@@ -181,10 +169,11 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
             )}
 
             {/* Navigation Header in Portfolio */}
-            <header className={`sticky top-0 z-30 backdrop-blur-md px-6 py-4 border-b flex items-center justify-between ${isDark ? 'bg-[#0B0F17]/80 border-slate-800/80' : 'bg-white/80 border-slate-100'
-              }`}>
+            <header className={`sticky top-0 z-30 backdrop-blur-md px-6 py-4 border-b flex items-center justify-between ${
+              isDark ? 'bg-[#0B0F17]/80 border-slate-800/80' : 'bg-white/80 border-slate-100'
+            }`}>
               <a href="#hero" className="flex items-center gap-2.5 group">
-                <div
+                <div 
                   className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-white text-sm shadow-xs transition-transform group-hover:scale-105"
                   style={{ backgroundColor: theme.accentColor }}
                 >
@@ -211,25 +200,67 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
               </div>
             </header>
 
-            {/* 1. HERO SECTION */}
-            <section id="hero" className="px-6 sm:px-10 pt-12 pb-16 relative">
-              <div className="space-y-6">
-                {/* Availability & Custom Badge */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${profile.availability === 'Open to Work'
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                    : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+            {/* 1. HERO SECTION WITH CUSTOM GLSL SHADER HERO */}
+            <section id="hero" className="relative overflow-hidden border-b border-slate-800/80">
+              {/* Fullscreen GLSL Fragment Shader Background Layer */}
+              {heroVisualMode === 'shader' && (
+                <div className="absolute inset-0 z-0 h-full w-full">
+                  <ShaderHeroCanvas 
+                    interactive={true} 
+                    palettePreset="aurora"
+                    className="w-full h-full"
+                  />
+                  {/* Subtle darkening gradient overlay ensuring AAA WCAG contrast for text */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F17]/70 via-[#0B0F17]/60 to-[#0B0F17] pointer-events-none" />
+                </div>
+              )}
+
+              <div className="px-6 sm:px-10 pt-12 pb-14 relative z-10 space-y-6">
+                {/* Visual Engine Mode Switcher + Availability */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+                      profile.availability === 'Open to Work'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                     }`}>
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>{profile.availability}</span>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span>{profile.availability}</span>
+                    </div>
+
+                    {profile.customBadge && (
+                      <div className={`px-3 py-1 rounded-full text-xs font-medium border ${
+                        isDark ? 'bg-slate-800/80 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200'
+                      }`}>
+                        {profile.customBadge}
+                      </div>
+                    )}
                   </div>
 
-                  {profile.customBadge && (
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium border ${isDark ? 'bg-slate-800/80 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-200'
-                      }`}>
-                      {profile.customBadge}
-                    </div>
-                  )}
+                  {/* Engine Mode Switcher */}
+                  <div className="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 backdrop-blur-md">
+                    <button
+                      onClick={() => setHeroVisualMode('shader')}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                        heroVisualMode === 'shader'
+                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-xs'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Sparkles className="w-3 h-3 text-indigo-300" />
+                      <span>GLSL Shader Hero</span>
+                    </button>
+                    <button
+                      onClick={() => setHeroVisualMode('mesh')}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                        heroVisualMode === 'mesh'
+                          ? 'bg-indigo-600 text-white shadow-xs'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <span>3D Mesh Engine</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Avatar and Main Headline */}
@@ -239,10 +270,10 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                       src={profile.avatarUrl}
                       alt={profile.name}
                       referrerPolicy="no-referrer"
-                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 shadow-lg"
+                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 shadow-xl ring-4 ring-indigo-500/20"
                       style={{ borderColor: theme.accentColor }}
                     />
-                    <div
+                    <div 
                       className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] shadow"
                       style={{ backgroundColor: theme.accentColor }}
                     >
@@ -251,16 +282,16 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   </div>
 
                   <div className="space-y-1.5 flex-1">
-                    <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+                    <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white drop-shadow-sm">
                       {profile.name}
                     </h1>
-                    <p
+                    <p 
                       className="text-sm sm:text-base font-bold"
                       style={{ color: theme.accentColor }}
                     >
                       {profile.tagline}
                     </p>
-                    <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
+                    <div className="flex items-center gap-3 text-xs text-slate-300 font-medium">
                       <span className="flex items-center gap-1">
                         <MapPin className="w-3.5 h-3.5" /> {profile.location}
                       </span>
@@ -272,10 +303,10 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
 
                 {/* Headline Hook & Bio */}
                 <div className="space-y-3 max-w-3xl">
-                  <p className="text-base sm:text-lg font-medium leading-relaxed text-slate-200">
+                  <p className="text-base sm:text-lg font-medium leading-relaxed text-slate-100 drop-shadow-xs">
                     "{profile.headline}"
                   </p>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                     {profile.bio}
                   </p>
                 </div>
@@ -296,8 +327,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                       href={profile.socials.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`p-2.5 rounded-xl border transition ${isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
-                        }`}
+                      className={`p-2.5 rounded-xl border transition ${
+                        isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+                      }`}
                       title="GitHub Profile"
                     >
                       <Github className="w-4 h-4" />
@@ -309,8 +341,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                       href={profile.socials.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`p-2.5 rounded-xl border transition ${isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
-                        }`}
+                      className={`p-2.5 rounded-xl border transition ${
+                        isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+                      }`}
                       title="LinkedIn Profile"
                     >
                       <Linkedin className="w-4 h-4" />
@@ -322,8 +355,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                       href={profile.socials.twitter}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`p-2.5 rounded-xl border transition ${isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
-                        }`}
+                      className={`p-2.5 rounded-xl border transition ${
+                        isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+                      }`}
                       title="Twitter / X"
                     >
                       <Twitter className="w-4 h-4" />
@@ -335,14 +369,22 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                       href={profile.socials.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`p-2.5 rounded-xl border transition ${isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
-                        }`}
+                      className={`p-2.5 rounded-xl border transition ${
+                        isDark ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+                      }`}
                       title="Personal Website"
                     >
                       <Globe className="w-4 h-4" />
                     </a>
                   )}
                 </div>
+
+                {/* 3D Hardware Accelerated Mesh Showcase Widget (Shown in mesh mode) */}
+                {heroVisualMode === 'mesh' && (
+                  <div className="pt-4 animate-in fade-in">
+                    <Hero3DCanvas accentColor={theme.accentColor} isDark={isDark} />
+                  </div>
+                )}
               </div>
             </section>
 
@@ -364,10 +406,11 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                       <button
                         key={cat}
                         onClick={() => setActiveCategory(cat)}
-                        className={`text-xs px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${activeCategory === cat
-                          ? 'text-white font-bold shadow-xs'
-                          : isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                          }`}
+                        className={`text-xs px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition cursor-pointer ${
+                          activeCategory === cat
+                            ? 'text-white font-bold shadow-xs'
+                            : isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
                         style={activeCategory === cat ? { backgroundColor: theme.accentColor } : {}}
                       >
                         {cat}
@@ -381,10 +424,11 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   {filteredProjects.map((project) => (
                     <div
                       key={project.id}
-                      className={`group rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col ${isDark
-                        ? 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/90'
-                        : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-lg'
-                        }`}
+                      className={`group rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col ${
+                        isDark
+                          ? 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900/90'
+                          : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-lg'
+                      }`}
                     >
                       {/* Image Thumbnail */}
                       <div className="relative h-48 sm:h-52 overflow-hidden bg-slate-950">
@@ -436,8 +480,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
 
                           {/* Key Metrics / Highlights */}
                           {project.keyImpactMetrics && project.keyImpactMetrics.length > 0 && (
-                            <div className={`p-2.5 rounded-xl text-[11px] space-y-1 ${isDark ? 'bg-slate-800/50 text-slate-300' : 'bg-slate-50 text-slate-700'
-                              }`}>
+                            <div className={`p-2.5 rounded-xl text-[11px] space-y-1 ${
+                              isDark ? 'bg-slate-800/50 text-slate-300' : 'bg-slate-50 text-slate-700'
+                            }`}>
                               <div className="font-bold text-emerald-400 flex items-center gap-1">
                                 <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
                                 {project.keyImpactMetrics[0]}
@@ -452,8 +497,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                             {project.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className={`text-[10px] font-mono px-2 py-0.5 rounded-md ${isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-700'
-                                  }`}
+                                className={`text-[10px] font-mono px-2 py-0.5 rounded-md ${
+                                  isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-700'
+                                }`}
                               >
                                 {tag}
                               </span>
@@ -519,8 +565,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                         style={{ backgroundColor: idx === 0 ? theme.accentColor : '#64748B' }}
                       />
 
-                      <div className={`p-5 rounded-2xl border transition ${isDark ? 'bg-slate-900/40 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200'
-                        }`}>
+                      <div className={`p-5 rounded-2xl border transition ${
+                        isDark ? 'bg-slate-900/40 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200'
+                      }`}>
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                           <div>
                             <h3 className="font-bold text-sm sm:text-base text-slate-100">{item.role}</h3>
@@ -549,8 +596,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                           {item.skillsUsed.map((sk) => (
                             <span
                               key={sk}
-                              className={`text-[10px] font-medium px-2 py-0.5 rounded ${isDark ? 'bg-slate-800/80 text-slate-300' : 'bg-white text-slate-700 border'
-                                }`}
+                              className={`text-[10px] font-medium px-2 py-0.5 rounded ${
+                                isDark ? 'bg-slate-800/80 text-slate-300' : 'bg-white text-slate-700 border'
+                              }`}
                             >
                               {sk}
                             </span>
@@ -578,8 +626,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   {skills.map((category) => (
                     <div
                       key={category.categoryName}
-                      className={`p-5 rounded-2xl border ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-50 border-slate-200'
-                        } space-y-4`}
+                      className={`p-5 rounded-2xl border ${
+                        isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-50 border-slate-200'
+                      } space-y-4`}
                     >
                       <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">
                         {category.categoryName}
@@ -626,8 +675,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                     {testimonials.map((t) => (
                       <div
                         key={t.id}
-                        className={`p-4 rounded-2xl border space-y-3 ${isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-50 border-slate-200'
-                          }`}
+                        className={`p-4 rounded-2xl border space-y-3 ${
+                          isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-50 border-slate-200'
+                        }`}
                       >
                         <p className="text-xs italic text-slate-300 leading-relaxed">
                           "{t.content}"
@@ -659,14 +709,15 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
                   </div>
 
                   <div className="space-y-3">
-                    {articles.map((art) => (
+                    {(articles ?? []).map((art) => (
                       <a
                         key={art.id}
                         href={art.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`block p-4 rounded-2xl border transition group ${isDark ? 'bg-slate-900/40 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200'
-                          }`}
+                        className={`block p-4 rounded-2xl border transition group ${
+                          isDark ? 'bg-slate-900/40 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200'
+                        }`}
                       >
                         <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
                           <span>{art.publication}</span>
@@ -684,8 +735,9 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
             </section>
 
             {/* FOOTER */}
-            <footer className={`px-6 sm:px-10 py-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs ${isDark ? 'border-slate-800/80 text-slate-500' : 'border-slate-200 text-slate-600'
-              }`}>
+            <footer className={`px-6 sm:px-10 py-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs ${
+              isDark ? 'border-slate-800/80 text-slate-500' : 'border-slate-200 text-slate-600'
+            }`}>
               <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
                 <div>
                   © {new Date().getFullYear()} {profile.name}. Built and generated with{' '}
@@ -695,13 +747,19 @@ export const LivePortfolioView: React.FC<LivePortfolioViewProps> = ({
 
               {/* Verified FlyRank Graduate Badge */}
               <div className="flex items-center gap-3">
-                <GraduateBadge
-                  verificationUrl={data.flyRankBadge?.verificationUrl || 'https://aifluency.flyrank.ai/week-09.html#plant-your-flag'}
-                  graduateName={data.flyRankBadge?.graduateName || profile.name}
-                  cohort={data.flyRankBadge?.cohort || 'AI Fluency — Cohort 2026'}
-                  issuedDate={data.flyRankBadge?.issuedDate || 'August 2026'}
-                  credentialId={data.flyRankBadge?.credentialId || 'FLR-2026-AIF-8941'}
-                />
+                <a
+                  href={data.flyRankBadge?.verificationUrl || 'https://aifluency.flyrank.ai/week-09.html#plant-your-flag'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-xl border border-blue-400/30 bg-blue-500/10 px-3 py-2 transition hover:bg-blue-500/20"
+                  title={`Verified credential: ${data.flyRankBadge?.credentialId || 'FLR-2026-AIF-8941'}`}
+                >
+                  <CheckCircle2 className="h-4 w-4 text-blue-400" />
+                  <span className="text-left">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-blue-400">Verified FlyRank Graduate</span>
+                    <span className="block text-[10px] text-slate-400">{data.flyRankBadge?.cohort || 'AI Fluency — Cohort 2026'}</span>
+                  </span>
+                </a>
               </div>
 
               <div className="flex items-center gap-4">

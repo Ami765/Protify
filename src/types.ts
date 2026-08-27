@@ -1,8 +1,8 @@
-import { any } from "three/tsl";
-
 export type NavTab = 
   | 'editor'
   | 'preview'
+  | 'shader-studio'
+  | '3d-studio'
   | 'ai-agent'
   | 'templates'
   | 'analytics'
@@ -40,44 +40,6 @@ export interface ProfileInfo {
   };
   customBadge?: string;
   resumeDownloadUrl?: string;
-}
-
-export interface SocialLink {
-  platform: string;
-  url: string;
-  label?: string;
-  icon?: string;
-}
-
-export interface PortfolioData {
-  profile: ProfileInfo;
-  about: string;
-  theme: ThemeConfig;
-  projects: ProjectItem[];
-  experience: ExperienceItem[];
-  skills: SkillCategory[];
-  education: EducationItem[];
-  testimonials: TestimonialItem[];
-  socialLinks: SocialLink[];
-  articles?: any[];
-  customDomain?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  publishedUrl?: string;
-  isPublished?: boolean;
-  flyRankBadge?: {
-    enabled: boolean;
-    verificationUrl: string;
-    cohort?: string;
-    graduateName?: string;
-    issuedDate?: string;
-    credentialId?: string;
-  };
-  analyticsConfig?: {
-    provider: 'portify' | 'plausible' | 'google-analytics' | 'umami';
-    trackingId?: string;
-    enabled: boolean;
-  };
 }
 
 export interface ProjectItem {
@@ -171,14 +133,13 @@ export interface ThemeConfig {
 
 export interface PortfolioData {
   profile: ProfileInfo;
-  about: string;
-  theme: ThemeConfig;
   projects: ProjectItem[];
   experience: ExperienceItem[];
   skills: SkillCategory[];
   education: EducationItem[];
   testimonials: TestimonialItem[];
-  socialLinks: SocialLink[];
+  articles: ArticleItem[];
+  theme: ThemeConfig;
   customDomain?: string;
   seoTitle?: string;
   seoDescription?: string;
