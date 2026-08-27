@@ -2,14 +2,6 @@ import { PortfolioData, AnalyticsStats } from '../types';
 
 export const initialPortfolioData: PortfolioData = {
   about: 'I specialize in bridging the gap between frontier AI models and intuitive client experiences. Over the past 7 years, I have architected high-throughput token streaming pipelines, scalable design systems, and micro-frontend platforms serving millions of global users.',
-  socialLinks: [
-    { platform: 'github', url: 'https://github.com/aminaajaz' },
-    { platform: 'linkedin', url: 'https://linkedin.com/in/amina-ajaz' },
-    { platform: 'twitter', url: 'https://x.com/amina_codes' },
-    { platform: 'website', url: 'https://aminaajaz.dev' },
-    { platform: 'dribbble', url: 'https://dribbble.com/aminaajaz' },
-    { platform: 'substack', url: 'https://aminaajaz.substack.com' },
-  ],
   profile: {
     name: 'Amina Ajaz',
     tagline: 'Senior Full-Stack AI Engineer & Design Technologist',

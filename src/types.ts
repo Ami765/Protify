@@ -133,6 +133,7 @@ export interface ThemeConfig {
 
 export interface PortfolioData {
   profile: ProfileInfo;
+  about: string;
   projects: ProjectItem[];
   experience: ExperienceItem[];
   skills: SkillCategory[];
